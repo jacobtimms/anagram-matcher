@@ -1,16 +1,68 @@
 <template>
   <div>
-    <button class="btn" @click="callTransform(inputString)">Test</button>
+    <div class="container-fluid body">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-xl-6 text-center">
+          <div class="mb-3">
+            <h1 style="font-size: 3.5rem">Welcome To Anagram Matcher</h1>
+          </div>
+          <div class="mb-3" style="color: #4b4951; margin-top: 2rem">
+            <h5>
+              Enter your filename in the below format to check for anagrams:
+            </h5>
+            <h5 class="text-muted">
+              apple_car_cider_tar_itch_rat_cried_helicopter_arc.txt
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div
+        class="row align-items-center justify-content-center"
+        style="margin-top: 1.5rem"
+      >
+        <div class="col-xl-6 text-center">
+          <div class="input-group mb-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Check your filename here!"
+              aria-describedby="button-run"
+              v-model="inputString"
+            />
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              id="button-run"
+              style="height: 100%"
+              @click="callTransform(this.inputString)"
+            >
+              Run
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="row align-items-center justify-content-center"
+        style="margin-top: 1rem"
+      >
+        <Results :list="anagramOutput" style="width: 25%"></Results>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Results from "./components/resultsBox.vue";
 export default {
   name: "App",
-  components: {},
+  components: {
+    Results,
+  },
   data() {
     return {
-      inputString: "apple_car_cider_tar_itch_rat_cried_helicopter_arc.txt",
+      inputString: "",
+      color: "#fef5ed",
+      anagramOutput: [],
     };
   },
   methods: {
@@ -19,23 +71,29 @@ export default {
       input = input.split(".");
       input.pop();
       input = input[0].toLowerCase().split("_").sort();
-
       this.transform(input, []);
     },
     transform(wordArray, organisedArray) {
       console.log(JSON.stringify(wordArray));
-      console.log(JSON.stringify(organisedArray));
+      console.log(typeof organisedArray);
       if (wordArray.length === 0) {
-        return organisedArray;
+        this.anagramOutput = organisedArray;
+        return;
       } else {
         for (let x = 0; x < wordArray.length; x++) {
           if (wordArray[x] === wordArray[0]) {
             continue;
           } else if (wordArray[0].length === wordArray[x].length) {
-            let comparedStrings = this.compareStrings(wordArray[0], wordArray[x]);
+            let comparedStrings = this.compareStrings(
+              wordArray[0],
+              wordArray[x]
+            );
 
             if (comparedStrings !== null) {
-              let pairExists = this.doesPairExist(comparedStrings, organisedArray);
+              let pairExists = this.doesPairExist(
+                comparedStrings,
+                organisedArray
+              );
 
               if (pairExists === false) {
                 organisedArray.push(comparedStrings.sort());
@@ -74,20 +132,18 @@ export default {
     },
   },
 };
+//document.body.style.background = "#fef5ed url('img_tree.png') no-repeat right top";
 </script>
 
 <style>
-.btn {
-  height: 2rem;
-  width: 10rem;
-}
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400&display=swap");
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Nunito, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #28282a;
   margin-top: 60px;
 }
 </style>
