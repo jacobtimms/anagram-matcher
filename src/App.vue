@@ -38,6 +38,7 @@
               :placeholder="inputPlaceholder"
               aria-describedby="button-run"
               v-model="inputString"
+              @keyup.enter="callTransform(this.inputString)"
             />
             <button
               class="btn btn-success"
@@ -140,8 +141,13 @@ export default {
     },
     prepInputString(string) {
       let output = string.split(".");
-      output.pop();
+      console.log(output);
+      if (output.length > 1) {
+        output.pop();
+      }
+      console.log(output);
       output = output[0].toLowerCase().split("_").sort();
+      console.log(output);
       return output;
     },
   },
@@ -175,9 +181,14 @@ export default {
   bottom: 0%;
   z-index: -1;
 }
-@media only screen and (max-width: 600px) {
+@media screen and (max-width: 600px) {
   .resultsBox {
     margin: 0% 0%;
+  }
+}
+@media screen and (max-height: 1000px), (max-width: 100px) {
+  .bg-decor {
+    position: relative;
   }
 }
 </style>
