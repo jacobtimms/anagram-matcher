@@ -4,13 +4,22 @@
       <div class="row align-items-center justify-content-center">
         <div class="col-xl-6 text-center">
           <div class="mb-3">
-            <h1 style="font-size: 3.5rem">Welcome To Anagram Matcher</h1>
+            <h1
+              style="
+                font-size: 4rem;
+                color: #4b4951;
+                margin-bottom: 10%;
+                margin-top: 5%;
+              "
+            >
+              Welcome to Anagram Matcher
+            </h1>
           </div>
           <div class="mb-3" style="color: #4b4951; margin-top: 2rem">
             <h5>
               Enter your filename in the below format to check for anagrams:
             </h5>
-            <h5 class="text-muted">
+            <h5 class="text-muted" style="word-break: break-all">
               apple_car_cider_tar_itch_rat_cried_helicopter_arc.txt
             </h5>
           </div>
@@ -18,19 +27,20 @@
       </div>
       <div
         class="row align-items-center justify-content-center"
-        style="margin-top: 1.5rem"
+        style="margin-top: 1.5rem; margin-bottom: 2rem"
       >
         <div class="col-xl-6 text-center">
           <div class="input-group mb-3">
             <input
+              :style="inputBorderColor"
               type="text"
               class="form-control"
-              placeholder="Check your filename here!"
+              :placeholder="inputPlaceholder"
               aria-describedby="button-run"
               v-model="inputString"
             />
             <button
-              class="btn btn-outline-secondary"
+              class="btn btn-success"
               type="button"
               id="button-run"
               style="height: 100%"
@@ -42,17 +52,26 @@
         </div>
       </div>
       <div
-        class="row align-items-center justify-content-center"
+        class="row align-items-center justify-content-center flex"
         style="margin-top: 1rem"
       >
-        <Results :list="anagramOutput" style="width: 25%"></Results>
+        <div class="col-xl-6 text-center">
+          <div class="resultsBox">
+            <div v-if="loading === true" class="spinner-border" role="status">
+              <span class="sr-only"></span>
+            </div>
+            <Results v-else :list="anagramOutput"></Results>
+          </div>
+        </div>
       </div>
     </div>
+    <img class="bg-decor" :src="myLogoSrc" />
   </div>
 </template>
 
 <script>
 import Results from "./components/resultsBox.vue";
+import myLogoSrc from "@/assets/bg-decor.svg";
 export default {
   name: "App",
   components: {
@@ -63,19 +82,31 @@ export default {
       inputString: "",
       color: "#fef5ed",
       anagramOutput: [],
+      loading: false,
+      inputPlaceholder: "Check your filename here!",
+      inputBorderColor: "border-color: #6c757d;",
     };
   },
   methods: {
     callTransform(input) {
-      console.log(input);
-      input = input.split(".");
-      input.pop();
-      input = input[0].toLowerCase().split("_").sort();
-      this.transform(input, []);
+      if (this.inputString === "") {
+        this.inputPlaceholder =
+          "No input registered! Please input your filename here.";
+        this.inputBorderColor = "border-color: red;";
+      } else {
+        this.inputBorderColor = "border-color: #6c757d;";
+        this.loading = true;
+        console.log(input);
+        input = input.split(".");
+        input.pop();
+        input = input[0].toLowerCase().split("_").sort();
+        this.transform(input, []);
+        this.loading = false;
+      }
     },
     transform(wordArray, organisedArray) {
       console.log(JSON.stringify(wordArray));
-      console.log(typeof organisedArray);
+      console.log(JSON.stringify(organisedArray));
       if (wordArray.length === 0) {
         this.anagramOutput = organisedArray;
         return;
@@ -131,8 +162,12 @@ export default {
       return false;
     },
   },
+  setup() {
+    return {
+      myLogoSrc,
+    };
+  },
 };
-//document.body.style.background = "#fef5ed url('img_tree.png') no-repeat right top";
 </script>
 
 <style>
@@ -145,5 +180,21 @@ export default {
   text-align: center;
   color: #28282a;
   margin-top: 60px;
+}
+
+.resultsBox {
+  margin: 0% 15%;
+}
+
+.bg-decor {
+  position: absolute;
+  left: 0%;
+  bottom: 0%;
+  z-index: -1;
+}
+@media only screen and (max-width: 600px) {
+  .resultsBox {
+    margin: 0% 0%;
+  }
 }
 </style>
