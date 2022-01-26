@@ -7,7 +7,8 @@
         @click="copyResults"
         style="padding-bottom: 0"
       >
-        <i class="bi bi-clipboard"></i>
+        <i v-if="copied === true" class="bi bi-check2-square"></i>
+        <i v-else class="bi bi-clipboard"></i>
       </button>
     </div>
     <div>
@@ -17,7 +18,8 @@
         @click="saveFile"
         style="padding-top: 0"
       >
-        <i class="bi bi-download"></i>
+        <i v-if="saved === true" class="bi bi-check2-square"></i>
+        <i v-else class="bi bi-download"></i>
       </button>
     </div>
     <div class="resultsText" v-for="array in list" :key="array">
@@ -36,6 +38,12 @@ export default {
   props: {
     list: Array,
   },
+  data() {
+    return {
+      copied: false,
+      saved: false,
+    };
+  },
   methods: {
     getResultsString() {
       let result = "";
@@ -49,10 +57,20 @@ export default {
       return result;
     },
     copyResults() {
+      this.copied = true;
+      setTimeout(() => {
+        this.copied = false;
+      }, 2000);
+
       let res = this.getResultsString();
       this.doCopy(res);
     },
     saveFile() {
+      this.saved = true;
+      setTimeout(() => {
+        this.saved = false;
+      }, 2000);
+
       let res = this.getResultsString();
       var blob = new Blob([res], {
         type: "text/plain;charset=utf-8",
@@ -109,6 +127,10 @@ export default {
 
 .resultsText {
   position: relative;
-  top: -8%;
+  top: -12%;
+}
+
+.bi:hover {
+  color: #99a799;
 }
 </style>

@@ -89,77 +89,60 @@ export default {
   },
   methods: {
     callTransform(input) {
+      if (this.checkInput() === true) {
+        this.loading = true;
+        let inputArray = this.prepInputString(input);
+        this.transform(inputArray);
+        this.loading = false;
+      }
+    },
+    transform(wordArray) {
+      let dict = [];
+      wordArray.forEach((word) => {
+        let wordKey = word.split("").sort().join();
+
+        if (dict.length === 0) {
+          let newObject = {
+            key: wordKey,
+            words: [word],
+          };
+          dict.push(newObject);
+        } else {
+          for (let i = 0; i < dict.length; i++) {
+            if (wordKey === dict[i].key) {
+              dict[i].words.push(word);
+              return;
+            }
+          }
+          let newObject = {
+            key: wordKey,
+            words: [word],
+          };
+          dict.push(newObject);
+        }
+      });
+      let returnArray = [];
+      dict.forEach((object) => {
+        returnArray.push(object.words);
+      });
+      this.anagramOutput = returnArray;
+    },
+    checkInput() {
       if (this.inputString === "") {
         this.inputPlaceholder =
           "No input registered! Please input your filename here.";
         this.inputBorderColor = "border-color: red;";
+        return false;
       } else {
         this.inputBorderColor = "border-color: #6c757d;";
-        this.loading = true;
-        console.log(input);
-        input = input.split(".");
-        input.pop();
-        input = input[0].toLowerCase().split("_").sort();
-        this.transform(input, []);
-        this.loading = false;
+        return true;
       }
     },
-    transform(wordArray, organisedArray) {
-      console.log(JSON.stringify(wordArray));
-      console.log(JSON.stringify(organisedArray));
-      if (wordArray.length === 0) {
-        this.anagramOutput = organisedArray;
-        return;
-      } else {
-        for (let x = 0; x < wordArray.length; x++) {
-          if (wordArray[x] === wordArray[0]) {
-            continue;
-          } else if (wordArray[0].length === wordArray[x].length) {
-            let comparedStrings = this.compareStrings(
-              wordArray[0],
-              wordArray[x]
-            );
-
-            if (comparedStrings !== null) {
-              let pairExists = this.doesPairExist(
-                comparedStrings,
-                organisedArray
-              );
-
-              if (pairExists === false) {
-                organisedArray.push(comparedStrings.sort());
-                wordArray.splice(0, 1);
-                wordArray.splice(x - 1, 1);
-                break;
-              }
-            }
-          }
-          organisedArray.push([wordArray[0]]);
-          wordArray.splice(0, 1);
-          break;
-        }
-        this.transform(wordArray, organisedArray);
-      }
-    },
-    compareStrings(baseString, comparedString) {
-      for (let i = 0; i < baseString.length; i++) {
-        if (!comparedString.split("").includes(baseString[i])) {
-          return null;
-        }
-      }
-      return [baseString, comparedString];
-    },
-    doesPairExist(newArray, existingArray) {
-      let newArrayString = JSON.stringify(newArray.sort());
-
-      existingArray.forEach((array) => {
-        let existingArrayString = JSON.stringify(array.sort());
-
-        if (newArrayString === existingArrayString) {
-          return true;
-        }
-      });
-      return false;
+    prepInputString(string) {
+      let output = string.split(".");
+      output.pop();
+      output = output[0].toLowerCase().split("_").sort();
+      return output;
     },
   },
   setup() {
