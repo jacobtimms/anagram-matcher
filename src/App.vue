@@ -176,9 +176,10 @@ export default {
 }
 
 .bg-decor {
-  position: absolute;
+  position: relative;
+  bottom: 59vh;
+  margin-bottom: -59vh;
   left: 0%;
-  bottom: 0%;
   z-index: -1;
 }
 @media screen and (max-width: 600px) {
@@ -186,9 +187,10 @@ export default {
     margin: 0% 0%;
   }
 }
-@media screen and (max-height: 1000px), (max-width: 100px) {
+@media screen and (max-width: 1200px) {
   .bg-decor {
-    position: relative;
+    bottom: 0;
+    margin-bottom: 0;
   }
 }
 </style>
